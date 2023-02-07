@@ -1,26 +1,18 @@
-# import the opencv library
 import cv2
-  
-  
-# define a video capture object
-vid = cv2.VideoCapture(0)
-  
-while(True):
-      
-    # Capture the video frame
-    # by frame
-    ret, frame = vid.read()
-  
-    # Display the resulting frame
-    cv2.imshow('frame', frame)
-      
-    # the 'q' button is set as the
-    # quitting button you may use any
-    # desired button of your choice
+from cv2 import VideoCapture
+def grayScale(r:int,g:int,b:int)-> int:
+    return int(r*0.2126+g*0.7152+b*0.0722)//3
+videoWebcam = VideoCapture(0)
+while True:
+    valeurRetour, imageWebcam = videoWebcam.read()
+    
+    for j in range(imageWebcam.shape[0]):
+        for i in range(imageWebcam.shape[1]):
+            r,g,b = imageWebcam[j][i]
+            imageWebcam[j][i]= grayScale(r,g,b)
+    cv2.imshow('Rendu de la caméra avec le filtre', imageWebcam)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-  
-# After the loop release the cap object
-vid.release()
-# Destroy all the windows
-cv2.destroyAllWindows()
+videoWebcam.release()
+cv2.destroyAllWindows() 
+
