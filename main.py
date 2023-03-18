@@ -1,4 +1,4 @@
-from src.perlinNoise import PerlinNoise
+from src.perlinNoise import FractalPerlinNoise
 from random import randint
-noise = PerlinNoise(2000, 2000, randint(0, 999999), 300)
+noise = FractalPerlinNoise(512, 512, 42, 0.02)
 noise.create_image()

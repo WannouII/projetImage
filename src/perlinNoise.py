@@ -2,13 +2,19 @@ from PIL import Image
 import random
 import math
 
-class PerlinNoise:
-    def __init__(self, width, height, seed, frequency):
+import random
+from PIL import Image
+
+
+class FractalPerlinNoise:
+    def __init__(self, width, height, seed, frequency, lacunarity=2.0, octaves=5, persistence=0.5):
         self.width = width
         self.height = height
         self.seed = seed
         self.frequency = frequency
-
+        self.octaves = octaves
+        self.lacunarity = lacunarity
+        self.persistence = persistence
         self.p = self.generate_permutation_table(seed)
 
     def fade(self, t):
@@ -48,17 +54,25 @@ class PerlinNoise:
         return permutation * 2
 
     def get_perlin_value(self, x, y, zoom=1):
-        perlin_value = self.perlin(x / (self.frequency * zoom), y / (self.frequency * zoom))
-        normalized_value = (perlin_value + 1) / 2
+        amplitude = 1
+        frequency = self.frequency
+        noise_value = 0
+        for i in range(self.octaves):
+            noise_value += self.perlin(x * frequency * zoom, y * frequency * zoom) * amplitude
+            amplitude *= self.persistence
+            frequency *= self.lacunarity
+        normalized_value = (noise_value + 1) / 2
         perlin_color = int(normalized_value * 255)
         return perlin_color
 
     def create_image(self):
-        img = Image.new("L", (self.width, self.height), (0))
+        img = Image.new("RGB", (self.width, self.height), (0, 0, 0))
         for i in range(self.width):
             for j in range(self.height):
                 perlin_color = self.get_perlin_value(i, j)
-                img.putpixel((i, j), perlin_color)
+                img.putpixel((i, j), (perlin_color, perlin_color, perlin_color))
         img.show()
-        img.save('heightmap.png')
+        img.save('fractal_perlin_noise.png')
         return img
+
+
